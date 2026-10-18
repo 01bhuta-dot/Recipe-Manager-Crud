@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Recipe Manager (CRUD)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+   
+</head>
+
+<body>
+    <header>
+        <h1>Personal Recipe Manager (CRUD)</h1>
+    </header>
+
+    <main>
+        <section>
+            <form id="recipe-form">
+                <input id="title" type="text"
+                       placeholder="Recipe Title" required>
+
+                <input id="ingredients" type="text"
+                       placeholder="Ingredients" required>
+
+                <input id="prepTime" type="number"
+                       placeholder="Preparation Time (mins)"
+                       min="1" required>
+
+                <select id="difficulty" required>
+                    <option value="">Difficulty Level</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+
+                <button type="submit">Create Record</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Existing Records</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Ingredients</th>
+                        <th>Prep Time</th>
+                        <th>Difficulty</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="recipe-list"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

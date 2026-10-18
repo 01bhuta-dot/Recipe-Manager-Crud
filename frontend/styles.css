@@ -1,0 +1,664 @@
+
+
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap");
+
+/* ---------- Animatable angle for the glowing glass borders ---------- */
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+/* ---------- Design tokens ---------- */
+:root {
+    --pink-50:   #FFF1F6;
+    --pink-200:  #FFC2D9;
+    --pink-300:  #FF9DC0;
+    --rose:      #E8457F;
+    --rose-deep: #C2255C;
+    --berry:     #B81D57;     /* headings: strong contrast on glass */
+    --lavender:  #D9C7FF;
+    --peach:     #FFD3B8;
+    --mint:      #BDEFDD;
+    --sky:       #BFE2FF;
+    --butter:    #FFF0B8;
+    --ink:       #3F1F36;     /* body text */
+    --ink-soft:  #7A4B66;
+
+    --glass-hi:  rgba(255, 255, 255, 0.62);
+    --glass-lo:  rgba(255, 255, 255, 0.22);
+    --glass-edge:rgba(255, 255, 255, 0.75);
+
+    --font-display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+    --font-body:    "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --radius-xl:   32px;
+    --radius-pill: 999px;
+    --ease-out:    cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: #FFDDEA;   /* fallback under all the animated layers */
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+::selection {
+    background: var(--pink-300);
+    color: var(--ink);
+}
+
+/* =========================================================
+   THE LIVING BACKGROUND  (4 fixed layers, GPU-animated)
+   body::before  → slow aurora of pastel light
+   html::before  → big, faint foods drifting up-left (far)
+   body::after   → crisp foods drifting down-right (near)
+   html::after   → floating glass bubbles
+   ========================================================= */
+
+/* 1 · Aurora */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -30%;
+    z-index: -4;
+    pointer-events: none;
+    background:
+        radial-gradient(40% 40% at 20% 25%, var(--pink-300) 0%, transparent 70%),
+        radial-gradient(38% 38% at 80% 20%, var(--lavender) 0%, transparent 70%),
+        radial-gradient(42% 42% at 70% 80%, var(--peach) 0%, transparent 70%),
+        radial-gradient(36% 36% at 25% 80%, var(--mint) 0%, transparent 70%),
+        radial-gradient(30% 30% at 50% 50%, var(--sky) 0%, transparent 70%);
+    animation: aurora 38s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes aurora {
+    from { transform: rotate(0deg)  scale(1); }
+    to   { transform: rotate(28deg) scale(1.12); }
+}
+
+/* 2 · Far food layer — larger, fainter, drifts the opposite way */
+html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: -480px;
+    bottom: -480px;
+    z-index: -3;
+    pointer-events: none;
+    opacity: 0.4;
+    background-size: 480px 480px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480' font-size='58'%3E%3Ctext x='40' y='92' transform='rotate(-12 40 92)'%3E&%23x1F349;%3C/text%3E%3Ctext x='250' y='72' transform='rotate(10 250 72)'%3E&%23x1F95E;%3C/text%3E%3Ctext x='388' y='196' transform='rotate(-8 388 196)'%3E&%23x1F34E;%3C/text%3E%3Ctext x='150' y='206' transform='rotate(14 150 206)'%3E&%23x1F366;%3C/text%3E%3Ctext x='30' y='326' transform='rotate(8 30 326)'%3E&%23x1F347;%3C/text%3E%3Ctext x='290' y='336' transform='rotate(-15 290 336)'%3E&%23x1F36D;%3C/text%3E%3Ctext x='168' y='436' transform='rotate(6 168 436)'%3E&%23x1F36F;%3C/text%3E%3Ctext x='392' y='446' transform='rotate(-10 392 446)'%3E&%23x1F9C7;%3C/text%3E%3Ctext x='352' y='96' transform='rotate(15 352 96)' font-size='42'%3E&%23x1F380;%3C/text%3E%3Ctext x='62' y='452' transform='rotate(-6 62 452)' font-size='40'%3E&%23x1F36C;%3C/text%3E%3C/svg%3E");
+    animation: drift-far 140s linear infinite;
+    will-change: transform;
+}
+
+@keyframes drift-far {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-480px, -480px); }
+}
+
+/* 3 · Near food layer — crisp, drifts down-right */
+body::after {
+    content: "";
+    position: fixed;
+    top: -320px;
+    left: -320px;
+    right: 0;
+    bottom: 0;
+    z-index: -2;
+    pointer-events: none;
+    opacity: 0.75;
+    background-size: 320px 320px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320' font-size='38'%3E%3Ctext x='24' y='64' transform='rotate(-15 24 64)'%3E&%23x1F353;%3C/text%3E%3Ctext x='170' y='54' transform='rotate(12 170 54)'%3E&%23x1F9C1;%3C/text%3E%3Ctext x='256' y='160' transform='rotate(-10 256 160)'%3E&%23x1F36A;%3C/text%3E%3Ctext x='104' y='142' transform='rotate(15 104 142)'%3E&%23x1F351;%3C/text%3E%3Ctext x='16' y='226' transform='rotate(10 16 226)'%3E&%23x1F34C;%3C/text%3E%3Ctext x='168' y='238' transform='rotate(-12 168 238)'%3E&%23x1F370;%3C/text%3E%3Ctext x='262' y='296' transform='rotate(8 262 296)'%3E&%23x1F369;%3C/text%3E%3Ctext x='76' y='304' transform='rotate(-8 76 304)'%3E&%23x1F37C;%3C/text%3E%3Ctext x='236' y='60' transform='rotate(18 236 60)' font-size='26'%3E&%23x1F352;%3C/text%3E%3Ctext x='178' y='142' transform='rotate(-14 178 142)' font-size='30'%3E&%23x1F380;%3C/text%3E%3C/svg%3E");
+    animation: drift-near 80s linear infinite;
+    will-change: transform;
+}
+
+@keyframes drift-near {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(320px, 320px); }
+}
+
+/* 4 · Glass bubbles, gently breathing */
+html::after {
+    content: "";
+    position: fixed;
+    inset: -40px;
+    z-index: -1;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-image:
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.10) 58%, rgba(255,255,255,0.28) 63%, transparent 65%),
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.10) 58%, rgba(255,255,255,0.28) 63%, transparent 65%),
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.10) 58%, rgba(255,255,255,0.28) 63%, transparent 65%),
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.10) 58%, rgba(255,255,255,0.28) 63%, transparent 65%),
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95) 0, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.10) 58%, rgba(255,255,255,0.28) 63%, transparent 65%);
+    background-size: 150px 150px, 90px 90px, 190px 190px, 70px 70px, 120px 120px;
+    background-position: 6% 18%, 90% 12%, 84% 78%, 14% 84%, 52% 94%;
+    animation: bubbles 14s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes bubbles {
+    from { transform: translate3d(0, 14px, 0)  scale(1); }
+    to   { transform: translate3d(0, -26px, 0) scale(1.04); }
+}
+
+/* =========================================================
+   HEADER — a floating glass pill with a passing glint
+   ========================================================= */
+header {
+    max-width: 1100px;
+    margin: 2.25rem auto 1.75rem;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+header h1 {
+    display: inline-block;
+    margin: 0;
+    padding: 0.75rem 2.2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.45rem, 4.6vw, 2.5rem);
+    letter-spacing: 0.01em;
+    color: var(--berry);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    background:
+        linear-gradient(110deg, transparent 38%, rgba(255,255,255,0.85) 50%, transparent 62%) 200% 0 / 260% 100% no-repeat,
+        linear-gradient(135deg, var(--glass-hi), var(--glass-lo));
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid var(--glass-edge);
+    border-radius: var(--radius-pill);
+    box-shadow:
+        0 18px 40px rgba(194, 37, 92, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -2px 6px rgba(255, 255, 255, 0.35);
+    animation:
+        bob 6s ease-in-out infinite,
+        glint 6.5s ease-in-out infinite;
+}
+
+header h1::before,
+header h1::after {
+    display: inline-block;
+    animation: wiggle 3.2s ease-in-out infinite;
+}
+
+header h1::before { content: "\1F353\00a0"; }                       /* strawberry */
+header h1::after  { content: "\00a0\1F9C1"; animation-delay: -1.6s; } /* cupcake */
+
+@keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+@keyframes glint {
+    0%, 55%  { background-position: 200% 0, 0 0; }
+    100%     { background-position: -100% 0, 0 0; }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-8deg) scale(1); }
+    50%      { transform: rotate(8deg)  scale(1.12); }
+}
+
+/* =========================================================
+   LAYOUT + GLASS PANELS
+   ========================================================= */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem 3.5rem;
+    display: grid;
+    gap: 1.9rem;
+}
+
+main section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 1.6rem;
+    background: linear-gradient(135deg, var(--glass-hi), var(--glass-lo));
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid var(--glass-edge);
+    border-radius: var(--radius-xl);
+    box-shadow:
+        0 24px 60px rgba(194, 37, 92, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+}
+
+main section:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 30px 70px rgba(194, 37, 92, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* keep real content above the decorative glass effects */
+main section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* a slow light sweep across the glass */
+main section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
+    background-size: 280% 100%;
+    background-position: 160% 0;
+    animation: sweep 9s ease-in-out infinite;
+}
+
+main section:nth-of-type(2)::before {
+    animation-delay: -4.5s;
+}
+
+@keyframes sweep {
+    0%, 45% { background-position: 160% 0; }
+    100%    { background-position: -80% 0; }
+}
+
+/* a glowing light that travels around the glass edge */
+main section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 1.5px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(
+        from var(--angle),
+        rgba(255, 255, 255, 0.08) 0 52%,
+        rgba(255, 255, 255, 0.95) 70%,
+        var(--pink-300) 80%,
+        #C084FC 90%,
+        rgba(255, 255, 255, 0.08) 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    animation: spin 8s linear infinite;
+}
+
+main section:nth-of-type(2)::after {
+    animation-direction: reverse;
+    animation-duration: 11s;
+}
+
+@keyframes spin {
+    to { --angle: 360deg; }
+}
+
+h2 {
+    margin: 0 0 1.1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.55rem;
+    color: var(--berry);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+h2::after {
+    content: "\00a0\1F36A";   /* cookie */
+}
+
+/* =========================================================
+   FORM — frosted inputs with a glowing focus
+   ========================================================= */
+#recipe-form {
+    display: grid;
+    grid-template-columns: 1.2fr 1.6fr 1fr 1fr auto;
+    gap: 0.9rem;
+    align-items: center;
+}
+
+input,
+select {
+    width: 100%;
+    height: 3.1rem;
+    padding: 0 1.2rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-pill);
+    box-shadow:
+        inset 0 2px 6px rgba(184, 29, 87, 0.10),
+        0 2px 0 rgba(255, 255, 255, 0.55);
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s var(--ease-out);
+}
+
+input::placeholder {
+    color: var(--ink-soft);
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.7rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5l6 6 6-6' fill='none' stroke='%23B81D57' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.15rem center;
+}
+
+option {
+    color: var(--ink);
+    background: #fff;
+}
+
+input:hover,
+select:hover {
+    background-color: rgba(255, 255, 255, 0.78);
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 2px 6px rgba(184, 29, 87, 0.06),
+        0 0 0 4px rgba(255, 141, 188, 0.45),
+        0 10px 24px rgba(232, 69, 127, 0.28);
+}
+
+/* =========================================================
+   BUTTONS — glossy candy-glass
+   ========================================================= */
+button {
+    font: inherit;
+    font-family: var(--font-display);
+    font-weight: 500;
+    cursor: pointer;
+    border: 0;
+    border-radius: var(--radius-pill);
+}
+
+button:focus-visible {
+    outline: 3px solid var(--berry);
+    outline-offset: 3px;
+}
+
+#recipe-form button[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    height: 3.1rem;
+    padding: 0 1.9rem;
+    font-size: 1.05rem;
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(120, 10, 55, 0.45);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 52%),
+        linear-gradient(135deg, #FF6FA5, var(--rose-deep));
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+        0 6px 0 #9C1C4B,
+        0 14px 24px rgba(194, 37, 92, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+    animation: halo 2.8s ease-in-out infinite;
+}
+
+#recipe-form button[type="submit"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.65), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s var(--ease-out);
+    pointer-events: none;
+}
+
+#recipe-form button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 0 #9C1C4B,
+        0 18px 30px rgba(194, 37, 92, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+#recipe-form button[type="submit"]:hover::after {
+    left: 130%;
+}
+
+#recipe-form button[type="submit"]:active {
+    transform: translateY(5px);
+    box-shadow:
+        0 1px 0 #9C1C4B,
+        0 6px 12px rgba(194, 37, 92, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+@keyframes halo {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 105, 165, 0)); }
+    50%      { filter: drop-shadow(0 0 14px rgba(255, 105, 165, 0.75)); }
+}
+
+/* =========================================================
+   TABLE — glass rows that float up and respond to touch
+   ========================================================= */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.6rem;
+}
+
+thead th {
+    padding: 0.85rem 1.1rem;
+    text-align: left;
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(120, 10, 55, 0.4);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 60%),
+        linear-gradient(135deg, var(--rose), var(--rose-deep));
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+thead th:first-child { border-radius: var(--radius-pill) 0 0 var(--radius-pill); padding-left: 1.5rem; }
+thead th:last-child  { border-radius: 0 var(--radius-pill) var(--radius-pill) 0; }
+
+tbody tr {
+    transition: transform 0.25s var(--ease-out), filter 0.25s ease;
+    animation: rise 0.65s var(--ease-out) backwards;   /* new rows float in too */
+}
+
+tbody tr:nth-child(2) { animation-delay: 0.07s; }
+tbody tr:nth-child(3) { animation-delay: 0.14s; }
+tbody tr:nth-child(4) { animation-delay: 0.21s; }
+tbody tr:nth-child(5) { animation-delay: 0.28s; }
+tbody tr:nth-child(6) { animation-delay: 0.35s; }
+tbody tr:nth-child(n+7) { animation-delay: 0.42s; }
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+tbody td {
+    padding: 0.9rem 1.1rem;
+    vertical-align: middle;
+    background: rgba(255, 255, 255, 0.55);
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    transition: background-color 0.25s ease;
+}
+
+tbody td:first-child {
+    padding-left: 1.5rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 20px 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--berry);
+}
+
+tbody td:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 0 20px 20px 0;
+}
+
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.4); }
+
+tbody tr:hover {
+    transform: translateY(-3px) scale(1.006);
+    filter: drop-shadow(0 12px 14px rgba(194, 37, 92, 0.2));
+}
+
+tbody tr:hover td { background: rgba(255, 255, 255, 0.88); }
+
+/* friendly message when there are no records yet */
+table:has(#recipe-list:empty)::after {
+    content: "No recipes yet. Add your first sweet treat above \1F353";
+    display: table-caption;
+    caption-side: bottom;
+    padding: 2rem 1rem 1rem;
+    text-align: center;
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+
+/* ---------- Action buttons created by app.js ---------- */
+td button {
+    padding: 0.42rem 1.05rem;
+    margin: 0.15rem 0.25rem 0.15rem 0;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 3px 8px rgba(184, 29, 87, 0.14), inset 0 1px 0 #fff;
+    transition: transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), background-color 0.2s;
+}
+
+td button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 14px rgba(184, 29, 87, 0.2), inset 0 1px 0 #fff;
+}
+
+td button:active {
+    transform: translateY(1px);
+}
+
+td .edit,
+td .btn-edit,
+td button[data-action="edit"] {
+    background: rgba(189, 239, 221, 0.9);
+}
+
+td .delete,
+td .btn-delete,
+td button[data-action="delete"] {
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(120, 10, 55, 0.4);
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Optional difficulty badges: <span class="badge easy">Easy</span> */
+.badge {
+    display: inline-block;
+    padding: 0.22rem 0.85rem;
+    font-weight: 800;
+    font-size: 0.85rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.badge.easy,   .badge-easy   { background: rgba(189, 239, 221, 0.95); color: #12583F; }
+.badge.medium, .badge-medium { background: rgba(255, 240, 184, 0.95); color: #6B4E00; }
+.badge.hard,   .badge-hard   { background: rgba(255, 211, 184, 0.95); color: #8E2F0E; }
+
+/* ---------- Pretty scrollbars ---------- */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pink-300) transparent;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 960px) {
+    #recipe-form {
+        grid-template-columns: 1fr 1fr;
+    }
+    #recipe-form button[type="submit"] {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    main section {
+        padding: 1.1rem;
+        border-radius: 26px;
+    }
+
+    #recipe-form {
+        grid-template-columns: 1fr;
+    }
+
+    /* let the table scroll sideways instead of squashing */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* lighter background on phones for smoother animation */
+    html::before { display: none; }
+}
+
+/* =========================================================
+   FALLBACKS + ACCESSIBILITY
+   ========================================================= */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    main section,
+    header h1 {
+        background: rgba(255, 246, 250, 0.93);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none important;
+        transition: none important;
+    }
+}
